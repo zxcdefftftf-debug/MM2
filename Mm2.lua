@@ -1,35 +1,47 @@
--- Инициализация библиотеки с ожиданием загрузки
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/wally-rblx/LinoriaLib/main/Library.lua"))()
-local ThemeManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/wally-rblx/LinoriaLib/main/addons/ThemeManager.lua"))()
+-- Создание основного контейнера
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 300, 0, 400)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 
-local Window = Library:CreateWindow({
-    Title = "MM2 System | @go8ai",
-    Center = true,
-    AutoShow = true,
-    TabPadding = 8,
-    MenuFadeTime = 0.2
-})
+-- Ввод ключа
+local KeyInput = Instance.new("TextBox", MainFrame)
+KeyInput.Size = UDim2.new(0, 260, 0, 40)
+KeyInput.Position = UDim2.new(0, 20, 0, 20)
+KeyInput.PlaceholderText = "Введите ключ..."
 
--- Вкладка авторизации
-local AuthTab = Window:AddTab("Auth")
-local AuthBox = AuthTab:AddInput("KeyBox", { Title = "Введите ключ", Value = "" })
+local AuthButton = Instance.new("TextButton", MainFrame)
+AuthButton.Size = UDim2.new(0, 260, 0, 40)
+AuthButton.Position = UDim2.new(0, 20, 0, 70)
+AuthButton.Text = "ПРОВЕРИТЬ"
 
-AuthTab:AddButton("ПРОВЕРИТЬ", function()
-    if Options.KeyBox.Value == "FREEMM2" then
-        Library:Notify("Ключ принят. Активация функций...")
-        -- Здесь происходит разблокировка функционала
+-- Функционал
+local FunctionContainer = Instance.new("Frame", MainFrame)
+FunctionContainer.Visible = false
+FunctionContainer.Size = UDim2.new(1, 0, 1, -120)
+FunctionContainer.Position = UDim2.new(0, 0, 0, 120)
+FunctionContainer.BackgroundTransparency = 1
+
+local function CreateToggle(name, yPos)
+    local btn = Instance.new("TextButton", FunctionContainer)
+    btn.Size = UDim2.new(0, 260, 0, 40)
+    btn.Position = UDim2.new(0, 20, 0, yPos)
+    btn.Text = name
+end
+
+CreateToggle("ESP (Визуализация)", 0)
+CreateToggle("Аимбот (Коррекция обзора)", 50)
+CreateToggle("Авто-выстрел в Мардера", 100)
+
+-- Логика авторизации
+AuthButton.MouseButton1Click:Connect(function()
+    if KeyInput.Text == "FREEMM2" then
+        FunctionContainer.Visible = true
+        AuthButton.Text = "УСПЕШНО"
     else
-        Library:Notify("Ошибка: Неверный ключ")
+        AuthButton.Text = "НЕВЕРНО"
+        task.wait(1)
+        AuthButton.Text = "ПРОВЕРИТЬ"
     end
 end)
-
--- Основные вкладки
-local MainTab = Window:AddTab("Main")
-MainTab:AddToggle("ESP", { Title = "Визуализация позиций (ESP)" })
-MainTab:AddToggle("Aim", { Title = "Коррекция вектора обзора (Aimbot)" })
-
-local AutoTab = Window:AddTab("Automated")
-AutoTab:AddToggle("AutoShoot", { Title = "Автоматизация события атаки (Авто-выстрел)" })
-
--- Инициализация тем и настроек
-Library:Notify("Система готова к работе.")

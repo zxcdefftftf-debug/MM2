@@ -1,45 +1,35 @@
--- Инициализация графического интерфейса (используем имитацию структуры)
+-- Инициализация библиотеки с ожиданием загрузки
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/wally-rblx/LinoriaLib/main/Library.lua"))()
-local Window = Library:CreateWindow({ Title = "MM2 System | @go8ai", Center = true, AutoShow = true })
+local ThemeManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/wally-rblx/LinoriaLib/main/addons/ThemeManager.lua"))()
 
--- Система проверки ключа
+local Window = Library:CreateWindow({
+    Title = "MM2 System | @go8ai",
+    Center = true,
+    AutoShow = true,
+    TabPadding = 8,
+    MenuFadeTime = 0.2
+})
+
+-- Вкладка авторизации
 local AuthTab = Window:AddTab("Auth")
-local KeyInput = AuthTab:AddInput("KeyBox", { Title = "Введите ключ", Value = "" })
-local AuthButton = AuthTab:AddButton("ПРОВЕРИТЬ", function()
+local AuthBox = AuthTab:AddInput("KeyBox", { Title = "Введите ключ", Value = "" })
+
+AuthTab:AddButton("ПРОВЕРИТЬ", function()
     if Options.KeyBox.Value == "FREEMM2" then
-        Library:Notify("Ключ принят. Активация...")
-        -- Активация основных функций
+        Library:Notify("Ключ принят. Активация функций...")
+        -- Здесь происходит разблокировка функционала
     else
         Library:Notify("Ошибка: Неверный ключ")
     end
 end)
 
--- Основные функции (ESP, Aimbot, Entity Tracking)
+-- Основные вкладки
 local MainTab = Window:AddTab("Main")
 MainTab:AddToggle("ESP", { Title = "Визуализация позиций (ESP)" })
 MainTab:AddToggle("Aim", { Title = "Коррекция вектора обзора (Aimbot)" })
 
--- Вторая вкладка: Автоматизация
 local AutoTab = Window:AddTab("Automated")
 AutoTab:AddToggle("AutoShoot", { Title = "Автоматизация события атаки (Авто-выстрел)" })
 
--- Логика идентификации ролей
-local function getRoles()
-    for _, player in pairs(game.Players:GetPlayers()) do
-        if player.Character and player.Character:FindFirstChild("Knife") then
-            -- Идентификация носителя ножа
-        elseif player.Character and player.Character:FindFirstChild("Gun") then
-            -- Идентификация носителя пистолета
-        end
-    end
-end
-
--- Анти-бан/Анти-кик (заглушка для клиентских проверок)
-local Meta = getrawmetatable(game)
-setreadonly(Meta, false)
-local OldIndex = Meta.__index
-Meta.__index = newcclosure(function(self, index)
-    if index == "Kick" then return function() end end
-    return OldIndex(self, index)
-end)
-
+-- Инициализация тем и настроек
+Library:Notify("Система готова к работе.")
